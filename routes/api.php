@@ -1,0 +1,81 @@
+<?php
+
+use Illuminate\Http\Request;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});*/
+
+$api = app('Dingo\Api\Routing\Router');
+
+$api->version('v1', function ($api) {
+    $api->group(['namespace' => 'App\Api\Controllers'], function ($api) {
+        $api->post('user/login', 'AuthController@authenticate');
+        $api->post('user/register', 'AuthController@register');
+		
+		$api->get('user/test',function (){
+		    return '1';
+        });
+
+		
+		//策划
+		$api->post('user/plotter/registerWithoutCode','PlotterController@registerWithoutCode');//没有验证码的注册
+		$api->post('user/plotter/registerWithCode','PlotterController@registerWithCode');//有验证码的注册，给前端不写验证码用
+		$api->get('user/plotter/modify','PlotterController@modify');
+		$api->post('user/plotter/reset','PlotterController@reset');                 //重置密码
+		$api->post('user/plotter/verifyResetCode','PlotterController@verifyResetCode'); //验证重置密码请求验证码正确性
+		$api->post('user/plotter/resetRequest','PlotterController@resetRequest');   //重置密码请求会发送验证码。给前端不写验证码用
+		$api->post('user/login','PlotterController@login');             //用户登录
+		$api->post('user/plotter/registerVerifyCode','PlotterController@registerVerifyCode');       //发送注册验证码，给前端不写验证码用
+        $api->post('user/plotter/modifyPic','PlotterController@modifyPic');     //修改策划人头像
+        $api->post('user/plotter/modifyName','PlotterController@modifyName');
+        $api->post('user/plotter/modifyPhone','PlotterController@modifyPhone');
+        $api->post('user/plotter/modifyPassword','PlotterController@modifyPassword');
+		
+		
+
+
+		
+		//裁判
+		$api->post('user/judger/modifyName','JudgerController@modifyName');
+		$api->post('user/judger/modifyPhone','JudgerController@modifyPhone');
+		$api->post('user/judger/modifyPassword','JudgerController@modifyPassword');
+		
+		
+		//组长
+		$api->post('user/actor/modifyName','ActorController@modifyName');
+		$api->post('user/actor/modifyPhone','ActorController@modifyPhone');
+		$api->post('user/actor/modifyPassword','ActorController@modifyPassword');
+		
+		//救援
+		$api->post('user/saver/modifyPic','SaveController@modifyPic');
+		$api->post('user/saver/modifyName','SaveController@modifyName');
+		$api->post('user/saver/modifyPhone','SaveController@modifyPhone');
+		$api->post('user/saver/modifyPassword','SaveController@modifyPassword');
+
+		$api->post('/user/verify','PlotterController@verify');
+
+		
+       /* $api->get('posts', 'PostController@index');
+        $api->get('posts/{id}', 'PostController@show');*/
+    });
+
+    $api->group(['namespace' => 'App\Api\Controllers','middleware'=>'jwt.auth'], function ($api) {
+        $api->get('posts', 'PostController@index');
+        $api->get('posts/{id}', 'PostController@show');
+        $api->get('me','AuthController@getAuthenticatedUser');
+    });
+
+});
+
