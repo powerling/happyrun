@@ -42,8 +42,8 @@ $api->version('v1', function ($api) {
         $api->post('user/plotter/modifyName','PlotterController@modifyName');
         $api->post('user/plotter/modifyPhone','PlotterController@modifyPhone');
         $api->post('user/plotter/modifyPassword','PlotterController@modifyPassword');
-		
-		
+        $api->post('user/plotter/actionSetting','PlotterController@actionSetting');
+
 
 
 		

@@ -9,6 +9,7 @@
         "dingo/api": "1.0.*@dev",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
+        "maatwebsite/excel": "~2.1.0",
         "overtrue/easy-sms": "^0.0.9",
         "overtrue/laravel-filesystem-qiniu": "^1.0",
         "toplan/laravel-sms": "~2.6",
