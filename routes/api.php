@@ -43,26 +43,33 @@ $api->version('v1', function ($api) {
         $api->post('user/plotter/modifyPhone','PlotterController@modifyPhone');
         $api->post('user/plotter/modifyPassword','PlotterController@modifyPassword');
         $api->post('user/plotter/actionSetting','PlotterController@actionSetting');
+        $api->post('user/actionInformation','PlotterController@actionInformation');
 
 
 
 		
 		//裁判
-		$api->post('user/judger/modifyName','JudgerController@modifyName');
-		$api->post('user/judger/modifyPhone','JudgerController@modifyPhone');
-		$api->post('user/judger/modifyPassword','JudgerController@modifyPassword');
-		
+		$api->post('user/judger/modifyName','JudgerController@modifyName');//完成
+		$api->post('user/judger/modifyPhone','JudgerController@modifyPhone');//完成
+		$api->post('user/judger/modifyPassword','JudgerController@modifyPassword');//完成
+		$api->post('user/judger/modifyPic','JudgerController@modifyPic');//完成
+
 		
 		//组长
-		$api->post('user/actor/modifyName','ActorController@modifyName');
-		$api->post('user/actor/modifyPhone','ActorController@modifyPhone');
-		$api->post('user/actor/modifyPassword','ActorController@modifyPassword');
-		
+		$api->post('user/actor/modifyName','ActorController@modifyName');//完成
+		$api->post('user/actor/modifyPhone','ActorController@modifyPhone');//完成
+		$api->post('user/actor/modifyPassword','ActorController@modifyPassword');//完成
+		$api->post('user/actor/modifyPic','ActorController@modifyPic');//完成
+		$api->post('user/startAction','ActorController@startAction');//完成
+		$api->post('user/endAction','ActorController@endAction');//完成
+		$api->post('user/resetPassword','ActorController@resetPassword');//完成
+
 		//救援
-		$api->post('user/saver/modifyPic','SaveController@modifyPic');
-		$api->post('user/saver/modifyName','SaveController@modifyName');
-		$api->post('user/saver/modifyPhone','SaveController@modifyPhone');
-		$api->post('user/saver/modifyPassword','SaveController@modifyPassword');
+		$api->post('user/saver/modifyPic','SaveController@modifyPic');          //完成
+		$api->post('user/saver/modifyName','SaveController@modifyName');        //完成
+		$api->post('user/saver/modifyPhone','SaveController@modifyPhone');      //完成
+		$api->post('user/saver/modifyPassword','SaveController@modifyPassword');//完成
+        $api->post('user/saver/setPassword','SaveController@resetPassword');
 
 		$api->post('/user/verify','PlotterController@verify');
 

@@ -83,7 +83,6 @@ class PlotterController extends BaseController
 		$account = $request->input('account');
 		$password = $request->input('password');
 
-
 		$user = DB::table('act_user')->where('account',$account)->first();
 //		return $user->password;
         $data = [
@@ -103,9 +102,9 @@ class PlotterController extends BaseController
                         'account' => $user->account,
                         'type' => $user->type,
                         'pid' => $user->pid,
-                  'pic' => $info->pic,
-                  'sex' => $info->sex,
-                  'name' => $info->name
+                        'pic' => $info->pic,
+                        'sex' => $info->sex,
+                        'name' => $info->name
                     ]
                 ];
                 return response()->json($data);
@@ -162,7 +161,7 @@ class PlotterController extends BaseController
                         'type' => $user->type,
                         'pid' => $user->pid,
                         'pic' => $info->pic,
-                        'name' => $info->name,
+                        //'name' => $info->name,
                         'aid' => $info->aid,
                         'gid' => $info->gid,
                         'sex' => $info->sex,
@@ -181,7 +180,13 @@ class PlotterController extends BaseController
     //注册时手机验证发送验证码（完成）
     public function registerVerifyCode(Request $request){
 	    $code = $this->verifyPhone($request->get('phone'));
-        DB::table('act_code')->insert(['phone'=>$request->get('phone'),'code' => $code]);
+	    $select = DB::table('act_code')->where('phone',$request->get('phone'))->first();
+	    if($select){
+            DB::table('act_code')->where(['phone'=>$request->get('phone')])->update(['code'=>$code]);
+        }else{
+            DB::table('act_code')->insert(['phone'=>$request->get('phone'),'code' => $code]);
+
+        }
     }
 
 
@@ -267,8 +272,7 @@ class PlotterController extends BaseController
         return response()->json($data);
     }
 
-
-    //重置密码（完成）
+    //重置策划人密码（完成）
     public function reset(Request $request){
         $newPassword = $request->get('newPassword');
         $phone = $request->get('phone');
@@ -277,7 +281,7 @@ class PlotterController extends BaseController
             'msg' => '操作错误！'
         ];
         $result = DB::table('act_user')->where(['account' => $phone])->update(['password' => md5($newPassword)]);
-        if(count($result)>0){
+        if($result){
             $data = [
                 'result' => true,
                 'msg' => '密码重置成功!'
@@ -293,50 +297,20 @@ class PlotterController extends BaseController
         $disk = Storage::disk('qiniu');
         $path_pre = 'http://ovqzh14i2.bkt.clouddn.com/';
         $path = $disk->put('avatars', $request->file('pic'));
-        DB::table('act_plotter')->where(['phone' => $phone])->update(['pic'=>$path_pre.$path]);
+        $update = DB::table('act_plotter')->where(['phone' => $phone])->update(['pic'=>$path_pre.$path]);
+        if($update){
+            $info = DB::table('act_plotter')->where('phone',$phone)->first();
+            return response()->json([
+                'result' => true,
+                'msg' => '修改成功！',
+                'data' => $info
+            ]);
+        }
         return response()->json([
-            'result' => true,
-            'msg' => '修改成功！',
-            'img_url' => $path_pre.$path
+            'result' => false,
+            'msg' => '操作失败！',
+            'data' => null
         ]);
-//		$data = Storage::put('avatars',$request->file('pic'));
-//        if($image){
-//            $type = $image->getClientMimeType();
-//            $size= $image->getClientSize();
-//            //判断是否是图片类型
-//            if($type == 'image/jpeg' || $type == 'image/png'){
-//                if($size > 3145728){
-//                    return response()->json(array('msg'=>'头像图片大小不能超过3M','code'=>0));
-//                }
-//                if ($image->isValid()) {//判断图片的格式
-//                    switch ($type) {
-//                        case 'image/jpeg':
-//                            $format='.jpg';
-//                            break;
-//                        default:
-//                            $format='.png';
-//                            break;
-//                    }
-//                    $fileName=uniqid().$format;
-//                    $path = $image->storeAs(
-//                        'head', $fileName
-//                    );
-//                    $images = url('storage/app/head/'.$fileName.'');//这里是图片的存放路径(可更改)
-////                    $this->outputSmall($fileName,$format);
-//                }else{
-//                    return response()->json(array('msg'=>'上传头像无效','code'=>0));
-//                }
-//                $data = [
-//                    'code'=>1,
-//                    'data'=>['head'=>url($path)]
-//                ];
-//            }else{
-//                $data = [
-//                    'code'=>0,
-//                    'msg'=>'未获取图片信息'
-//                ];
-//            }
-//        }
     }
 
     //修改????
@@ -371,34 +345,23 @@ class PlotterController extends BaseController
 	{
 		$name = $request->get('name');
 		$phone = $request->get('phone');
-		
-		$modifyName = DB::table('act_plotter')->where('phone',$phone)->update(['name'=>$name]);
-		
-		if($modifyName){
-            $info = DB::table('act_plotter')->where('phone',$phone)->first();
-            $user = DB::table('act_user')->where('account',$phone)->first();
-			$data = [
-		      'code'=>1,
-		      'msg'=>'修改成功',
-                'data'=>[
-                    'id' => $user->id,
-                    'account' => $user->account,
-                    'type' => $user->type,
-                    'pid' => $user->pid,
-                    'pic' => $info->pic,
-                    'sex' => $info->sex,
-                    'name' => $info->name
-                ]
-		   ];
-		   return response()->json($data);
-		}else{
-			$data = [
-		      'code'=>0,
-		      'msg'=>'修改失败',
-		      'data'=>null
-		   ];
-		   return response()->json($data);
-		}
+            $modifyName = DB::table('act_plotter')->where('phone',$phone)->update(['name'=>$name]);
+            if($modifyName){
+                $info = DB::table('act_plotter')->where('phone',$phone)->first();
+                $data = [
+                    'result'=>true,
+                    'msg'=>'修改成功',
+                    'data'=> $info
+                ];
+                return response()->json($data);
+            }else{
+                $data = [
+                    'result'=>false,
+                    'msg'=>'修改失败',
+                    'data'=>null
+                ];
+                return response()->json($data);
+            }
 	}
 	
 	
@@ -413,10 +376,13 @@ class PlotterController extends BaseController
                 'msg' =>  '该手机号已被使用！'
             ]);
         }
+        $select = DB::table('act_plotter')->where('id',$pid)->first();
         $result = DB::table('act_plotter')->where('id',$pid)->update(['phone'=> $phone]);
 		if($result){
             $info = DB::table('act_plotter')->where('phone',$phone)->first();
             $user = DB::table('act_user')->where('account',$phone)->first();
+            DB::table('act_code')->where('phone',$select->phone)->delete();
+            DB::table('act_code')->insert(['phone'=>$phone,'code'=> '0000']);
             $data = [
                 'result'=> true,
                 'msg'=>'修改成功',
@@ -431,14 +397,13 @@ class PlotterController extends BaseController
                 ]
         ];
 		   return response()->json($data);
-		}else{
-			$data = [
-		      'result'=>false,
-		      'msg'=>'修改失败',
-		      'data'=>null
-		   ];
-		   return response()->json($data);
 		}
+        $data = [
+            'result'=>false,
+            'msg'=>'修改失败',
+            'data'=>null
+        ];
+        return response()->json($data);
 	}
 	
 	
@@ -453,54 +418,29 @@ class PlotterController extends BaseController
 			$data = [
 		      'result'=>true,
 		      'msg'=>'修改成功',
-		      //'data'=>
-		   ];
-		   return response()->json($data);
-		}else{
-			$data = [
-		      'result'=>false,
-		      'msg'=>'修改失败',
-		      //'data'=>
 		   ];
 		   return response()->json($data);
 		}
+        $data = [
+            'result'=>false,
+            'msg'=>'修改失败',
+        ];
+        return response()->json($data);
+
 	}
 	
 
-	//活动信息设定
+	//活动信息设定（完成）
 	public function actionSetting(Request $request){
 	        $groupCount = $request->get('count');
 	        $name = $request->get('name');
 	        $pid = $request->get('pid');
-            $action_id = DB::table('act_action')->insertGetId(['pid'=>$pid,'name' => $name,]);
-//            return $action->id;
-//	        return $action;
-//        $cellData = [
-//            ['学号','姓名','成绩'],
-//            ['10001','AAAAA','99'],
-//            ['10002','BBBBB','92'],
-//            ['10003','CCCCC','95'],
-//            ['10004','DDDDD','89'],
-//            ['10005','EEEEE','96'],
-//        ];
-//        Excel::create(iconv('UTF-8', 'UTF-8', '学生成绩'),function($excel) use ($cellData){
-//            $excel->sheet('score', function($sheet) use ($cellData){
-//                $sheet->rows($cellData);
-//            });
-//        })->export('xls');
-//        $path = Storage::disk('qiniu')->put('excels', $request->file('excel'));
-//        return $path;
-//            $file = $request->file('excel');
-//            $extension =  $file->getClientOriginalExtension();
-//            $pre_name = md5(time());
-//            $path = Storage::disk('local')->putFileAs('excels',$file,$pre_name.'.'.$extension);
-////            return $path;
-//            $file_path = 'public/excels/'.$pre_name.'.'.$extension;
-//            $file_path = 'public/excels/f940ff1dd9c5a416662df7a5b7236a16.xlsx';
             $file_path = $request->file('excel');
+            $action_id = DB::table('act_action')->insertGetId(['pid'=>$pid,'name' => $name,]);
             Excel::load($file_path, function($reader) use ($action_id,$groupCount){
+
                 $sheet1 = $reader->getSheet(0);
-                //获取表中的数据
+                //获取第一张表中的数据
                 $results1 = $sheet1->toArray();
                 unset($results1[0]);
                 $group_id = 1;
@@ -517,8 +457,10 @@ class PlotterController extends BaseController
                     }
                     DB::table('act_actor')->where('id',$grouper->id)->update(['gid'=>$group_id]);
                 }
+
+
                 $sheet2 = $reader->getSheet(1);
-                //获取表中的数据
+                //获取第二张表中的数据
                 $results2 = $sheet2->toArray();
                 unset($results2[0]);
                 for($i = 1;$i <= count($results2);$i++){
@@ -527,7 +469,7 @@ class PlotterController extends BaseController
                         if(count($select_judger)>0){
                             DB::table('act_judger')->where('phone', $results2[$i][2])->delete();
                         }
-                        DB::table('act_judger')->insert(['name'=>$results2[$i][1],'phone' => $results2[$i][2]]);
+                        DB::table('act_judger')->insert(['aid'=>$action_id ,'name'=>$results2[$i][1],'phone' => $results2[$i][2]]);
                     }else{
                         $select_saver = DB::table('act_saver')->where('phone', $results2[$i][2])->get();
                         if(count($select_saver)>0){
@@ -536,8 +478,25 @@ class PlotterController extends BaseController
                         DB::table('act_saver')->insert(['aid'=>$action_id ,'name'=>$results2[$i][1],'phone' => $results2[$i][2]]);
                     }
                 }
-                $way_id = DB::table('act_way')->insertGetId(['name'=>'路线A','aid' => $action_id]);
-                DB::table('act_place')->insert(['wid'=>$way_id,'name'=> '起点站','orderid' => 0,'code'=>'0000']);
+                //获取第三张表的信息
+                $sheet3 = $reader->getSheet(2);
+                //获取第二张表中的数据
+                $results3 = $sheet3->toArray();
+                unset($results3[0]);
+                foreach ($results3 as $key => $value) {
+                    DB::table('act_place')->insert(['name'=>$value[1],'aid'=>$action_id,'orderid' => 0,'code' => '0000']);
+                }
+
+                $sheet4 = $reader->getSheet(3);
+                //获取第二张表中的数据
+                $results4 = $sheet4->toArray();
+                unset($results4[0]);
+                foreach ($results4 as $key => $value) {
+                    DB::table('act_duty')->insert(['title'=>$value[1],'aid'=>$action_id]);
+                }
+
+//                $way_id = DB::table('act_way')->insertGetId(['name'=>'路线A','aid' => $action_id]);
+//                DB::table('act_place')->insert(['wid'=>$way_id,'name'=> '起点站','orderid' => 1,'code'=>'0000']);
 //                foreach ($results2 as $key => $value) {
 //                    echo '<BR><BR>编号:'.$value[0];
 //                    echo '<BR>姓名:'.$value[1];
@@ -570,24 +529,33 @@ class PlotterController extends BaseController
 
         });
 
-//        $cellData = [
-//            ['学号','姓名','成绩'],
-//            ['10001','AAAAA','99'],
-//            ['10002','BBBBB','92'],
-//            ['10003','CCCCC','95'],
-//            ['10004','DDDDD','89'],
-//            ['10005','EEEEE','96'],
-//        ];
-//        Excel::create(iconv('UTF-8', 'GBK', '学生成绩'),function($excel) use ($cellData){
-//            $excel->sheet('score', function($sheet) use ($cellData){
-//                $sheet->rows($cellData);
-//            });
-//        })->export('xls')->export('xls');
-//        Excel::load($file, function($reader) {
-//            $data = $reader->all();
-//            dd($data);
-//        });
+            $data = DB::table('act_action')->where('id',$action_id)->first();
+            return response()->json($data);
 	}
+
+
+	//获取活动的详细信息(完成)
+    public function actionInformation(Request $request){
+        $action_id = $request->get('id');
+        $action_info = DB::table('act_action')->where('id',$action_id)->get();
+        $action_actor = DB::table('act_actor')->where('aid',$action_id)->get();
+        $action_duty = DB::table('act_duty')->where('aid',$action_id)->get();
+        $action_group = DB::table('act_group')->where('aid',$action_id)->get();
+        $action_judger = DB::table('act_judger')->where('aid',$action_id)->get();
+        $action_place = DB::table('act_place')->where('aid',$action_id)->get();
+        $action_saver = DB::table('act_saver')->where('aid',$action_id)->get();
+        $action_way  = DB::table('act_way')->where('aid',$action_id)->get();
+        return response()->json([
+            'action_info' => $action_info,
+            'action_actor' => $action_actor,
+            'action_duty' => $action_duty,
+            'action_group' => $action_group,
+            'action_judger' => $action_judger,
+            'action_place' => $action_place,
+            'action_saver' => $action_saver,
+            'action_way' => $action_way
+        ]);
+    }
 	
 	
 	
