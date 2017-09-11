@@ -189,9 +189,14 @@ class PlotterController extends BaseController
 	    $select = DB::table('act_code')->where('phone',$request->get('phone'))->first();
 	    if($select){
             DB::table('act_code')->where(['phone'=>$request->get('phone')])->update(['code'=>$code]);
+            return response()->json([
+                'code' => 200
+            ]);
         }else{
             DB::table('act_code')->insert(['phone'=>$request->get('phone'),'code' => $code]);
-
+            return response()->json([
+                'code' => 200
+            ]);
         }
     }
 
@@ -577,7 +582,5 @@ class PlotterController extends BaseController
             'action_way' => $action_way
         ]);
     }
-	
-	
-	
+
 }
