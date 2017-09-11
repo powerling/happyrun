@@ -18,14 +18,14 @@ class ActorController extends BaseController
 		
 		if($modifyName){
 			$data = [
-		      'code'=>1,
+		      'code'=>200,
 		      'msg'=>'修改成功',
 		      'data'=>DB::table('act_actor')->where('id',$id)->get()
 		   ];
 		   return response()->json($data);
 		}else{
 			$data = [
-		      'code'=>0,
+		      'code'=>400,
 		      'msg'=>'修改失败',
 		      'data'=>null
 		   ];
@@ -41,6 +41,7 @@ class ActorController extends BaseController
         $select = DB::table('act_actor')->where('phone',$phone)->first();
         if(count($select)>0){
             return response()->json([
+                'code'=> 400,
                 'result' => false,
                 'msg' =>  '该手机号已被使用！'
             ]);
@@ -50,14 +51,14 @@ class ActorController extends BaseController
             $user = DB::table('act_actor')->where('id',$id)->first();
             DB::table('act_user')->where('pid',$user->id)->update(['account'=>$phone,'password'=> md5($phone)]);
 			$data = [
-		      'code'=>1,
+		      'code'=>200,
 		      'msg'=>'修改成功',
 		      'data'=>DB::table('act_actor')->where('id',$id)->get()
 		   ];
 		   return response()->json($data);
 		}else{
 			$data = [
-		      'code'=>0,
+		      'code'=>400,
 		      'msg'=>'修改失败',
 		      'data'=>null
 		   ];
@@ -76,6 +77,7 @@ class ActorController extends BaseController
 		
 		if($modifyPassword){
 			$data = [
+                'code'=> 200,
 		      'result'=>true,
 		      'msg'=>'修改成功',
 		      //'data'=>
@@ -83,6 +85,7 @@ class ActorController extends BaseController
 		   return response()->json($data);
 		}
 			$data = [
+                'code'=> 400,
 		      'result'=>false,
 		      'msg'=>'修改失败',
 		      //'data'=>
@@ -101,12 +104,14 @@ class ActorController extends BaseController
         if($update){
             $info = DB::table('act_actor')->where('phone',$phone)->first();
             return response()->json([
+                'code'=> 200,
                 'result' => true,
                 'msg' => '修改成功！',
                 'data' => $info
             ]);
         }
         return response()->json([
+            'code'=> 400,
             'result' => false,
             'msg' => '操作失败！',
             'data' => null
@@ -120,11 +125,13 @@ class ActorController extends BaseController
 	    if($result){
 	        $data = DB::table('act_action')->where('id',$action_id)->first();
 	        return response()->json([
+                'code'=> 200,
 	            'result' => true,
                 'data' => $data
             ]);
         }
         return response()->json([
+            'code'=> 400,
            'result' =>false,
             'data'=> null
         ]);
@@ -141,14 +148,33 @@ class ActorController extends BaseController
                 ['type','>',1],
             ])->delete();
             return response()->json([
+                'code'=> 200,
                 'result' => true,
                 'data' => $data
             ]);
         }
         return response()->json([
+            'code'=> 400,
             'result' =>false,
             'data'=> null
         ]);
     }
 
+    //组员信息
+    public function group(Request $request){
+        $group_id = $request->get('group_id');
+        $group = DB::table('act_actor')->where('gid',$group_id)->get();
+        if(count($group)>0){
+            return response()->json([
+                'code'=> 200,
+                'result' => true,
+                'data' => $group
+            ]);
+        }
+        return response()->json([
+            'code'=> 400,
+            'result' => false,
+            'data' => null
+        ]);
+    }
 }

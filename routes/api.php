@@ -23,7 +23,6 @@ $api->version('v1', function ($api) {
     $api->group(['namespace' => 'App\Api\Controllers'], function ($api) {
         $api->post('user/login', 'AuthController@authenticate');
         $api->post('user/register', 'AuthController@register');
-		
 		$api->get('user/test',function (){
 		    return '1';
         });
@@ -62,7 +61,8 @@ $api->version('v1', function ($api) {
 		$api->post('user/actor/modifyPic','ActorController@modifyPic');//完成
 		$api->post('user/startAction','ActorController@startAction');//完成
 		$api->post('user/endAction','ActorController@endAction');//完成
-		$api->post('user/resetPassword','ActorController@resetPassword');//完成
+		$api->post('user/actor/group','ActorController@group');//完成
+
 
 		//救援
 		$api->post('user/saver/modifyPic','SaveController@modifyPic');          //完成

@@ -23,6 +23,7 @@ class PlotterController extends BaseController
         $select = DB::table('act_user')->where('account',$phone)->get();
         if(count($select)>0){
             return response()->json([
+                'code'=> 400,
                 'data' => false,
                 'msg' => '帐号已经存在!'
             ]);
@@ -32,6 +33,7 @@ class PlotterController extends BaseController
 		$res = DB::table('act_user')->where('account',$phone)->update(['password'=>md5($pwd)]);
         if($res){
 			return response()->json([
+                'code'=> 200,
 			    'data'=>true,
                 'msg' => '注册成功！'
             ]);
@@ -40,6 +42,7 @@ class PlotterController extends BaseController
 			DB::table('act_user')->where('account',$phone)->delete();
             DB::table('act_code')->where('phone',$phone)->delete();
 			return response()->json([
+                'code'=> 400,
 			    'data' => false,
                 'msg' => '注册失败！'
             ]);
@@ -56,6 +59,7 @@ class PlotterController extends BaseController
         $select = DB::table('act_user')->where('account',$phone)->get();
         if(count($select)>0){
             return response()->json([
+                'code'=> 400,
                 'data' => false,
                 'msg' => '帐号已经存在!'
             ]);
@@ -65,6 +69,7 @@ class PlotterController extends BaseController
             DB::table('act_plotter')->insert(['name'=>$name,'phone'=>$phone,'pic' => 'http://orwi9xvus.bkt.clouddn.com/head_defalut.jpg']);
             DB::table('act_user')->where('account',$phone)->update(['password'=>md5($pwd)]);
             return response()->json([
+                'code'=> 200,
                 'data'=>true,
                 'msg' => '注册成功！'
             ]);
@@ -72,6 +77,7 @@ class PlotterController extends BaseController
             DB::table('act_plotter')->where('phone',$phone)->delete();
             DB::table('act_user')->where('account',$phone)->delete();
             return response()->json([
+                'code'=> 400,
                 'data' => false,
                 'msg' => '注册失败！'
             ]);
@@ -86,7 +92,7 @@ class PlotterController extends BaseController
 		$user = DB::table('act_user')->where('account',$account)->first();
 //		return $user->password;
         $data = [
-            'code'=>0,
+            'code'=>400,
             'msg'=>'用户名或密码错误，登录失败！',
             'data'=>null
         ];
@@ -95,7 +101,7 @@ class PlotterController extends BaseController
 		    if($user->type == 1){
                 $info = DB::table('act_plotter')->where('phone',$account)->first();
                 $data = [
-                    'code'=>1,
+                    'code'=>200,
                     'msg'=>'登录成功！',
                     'data'=>[
                         'id' => $user->id,
@@ -114,7 +120,7 @@ class PlotterController extends BaseController
             if($user->type == 2){
                 $info = DB::table('act_judger')->where('phone',$account)->first();
                 $data = [
-                    'code'=>1,
+                    'code'=>200,
                     'msg'=>'登录成功！',
                     'data'=>[
                         'id' => $user->id,
@@ -132,7 +138,7 @@ class PlotterController extends BaseController
             if($user->type == 4){
                 $info = DB::table('act_saver')->where('phone',$account)->first();
                 $data = [
-                    'code'=>1,
+                    'code'=>200,
                     'msg'=>'登录成功！',
                     'data'=>[
                         'id' => $user->id,
@@ -153,7 +159,7 @@ class PlotterController extends BaseController
             if($user->type == 8){
                 $info = DB::table('act_actor')->where('phone',$account)->first();
                 $data = [
-                    'code'=>1,
+                    'code'=>200,
                     'msg'=>'登录成功！',
                     'data'=>[
                         'id' => $user->id,
@@ -246,6 +252,7 @@ class PlotterController extends BaseController
             DB::table('act_code')->where(['phone' => $phone])->update(['code'=> $code]);
         }else{
             return response()->json([
+                'code'=> 400,
                 'result' => false,
                 'msg' => '该帐号尚未注册！'
             ]);
@@ -259,11 +266,13 @@ class PlotterController extends BaseController
         $phone = $request->get('phone');
         $select = DB::table('act_code')->where(['phone'=>$phone,'code' =>$code])->get();
         $data = [
+            'code'=> 400,
             'result' => false,
             'msg' => '验证码输入错误！'
         ];
         if(count($select)>0){
             $data = [
+                'code'=> 200,
                 'result' => true,
                 'msg' => '验证码输入正确！'
             ];
@@ -277,12 +286,14 @@ class PlotterController extends BaseController
         $newPassword = $request->get('newPassword');
         $phone = $request->get('phone');
         $data = [
+            'code'=> 400,
             'result' => false,
             'msg' => '操作错误！'
         ];
         $result = DB::table('act_user')->where(['account' => $phone])->update(['password' => md5($newPassword)]);
         if($result){
             $data = [
+                'code'=> 200,
                 'result' => true,
                 'msg' => '密码重置成功!'
             ];
@@ -301,12 +312,14 @@ class PlotterController extends BaseController
         if($update){
             $info = DB::table('act_plotter')->where('phone',$phone)->first();
             return response()->json([
+                'code'=> 200,
                 'result' => true,
                 'msg' => '修改成功！',
                 'data' => $info
             ]);
         }
         return response()->json([
+            'code'=> 400,
             'result' => false,
             'msg' => '操作失败！',
             'data' => null
@@ -349,6 +362,7 @@ class PlotterController extends BaseController
             if($modifyName){
                 $info = DB::table('act_plotter')->where('phone',$phone)->first();
                 $data = [
+                    'code'=> 200,
                     'result'=>true,
                     'msg'=>'修改成功',
                     'data'=> $info
@@ -356,6 +370,7 @@ class PlotterController extends BaseController
                 return response()->json($data);
             }else{
                 $data = [
+                    'code'=> 400,
                     'result'=>false,
                     'msg'=>'修改失败',
                     'data'=>null
@@ -372,6 +387,7 @@ class PlotterController extends BaseController
 		$modifyPhone = DB::table('act_plotter')->where('phone',$phone)->first();
 		if(count($modifyPhone)>0){
 		    return response()->json([
+                'code'=> 400,
 		        'result' => false,
                 'msg' =>  '该手机号已被使用！'
             ]);
@@ -384,6 +400,7 @@ class PlotterController extends BaseController
             DB::table('act_code')->where('phone',$select->phone)->delete();
             DB::table('act_code')->insert(['phone'=>$phone,'code'=> '0000']);
             $data = [
+                'code'=> 200,
                 'result'=> true,
                 'msg'=>'修改成功',
                 'data'=>[
@@ -399,6 +416,7 @@ class PlotterController extends BaseController
 		   return response()->json($data);
 		}
         $data = [
+            'code'=> 400,
             'result'=>false,
             'msg'=>'修改失败',
             'data'=>null
@@ -416,12 +434,14 @@ class PlotterController extends BaseController
 		
 		if($modifyPassword){
 			$data = [
+                'code'=> 200,
 		      'result'=>true,
 		      'msg'=>'修改成功',
 		   ];
 		   return response()->json($data);
 		}
         $data = [
+            'code'=> 400,
             'result'=>false,
             'msg'=>'修改失败',
         ];
@@ -546,6 +566,7 @@ class PlotterController extends BaseController
         $action_saver = DB::table('act_saver')->where('aid',$action_id)->get();
         $action_way  = DB::table('act_way')->where('aid',$action_id)->get();
         return response()->json([
+            'code'=> 200,
             'action_info' => $action_info,
             'action_actor' => $action_actor,
             'action_duty' => $action_duty,
