@@ -39,6 +39,7 @@ class JudgerController extends BaseController
 	public function modifyPhone(Request $request){
         $phone = $request->get('phone');
         $id = $request->get('id');
+        $tyep = $request->get('type');
         $select = DB::table('act_judger')->where('phone',$phone)->first();
         if(count($select)>0){
             return response()->json([
@@ -50,7 +51,7 @@ class JudgerController extends BaseController
         $modifyPhone = DB::table('act_judger')->where('id',$id)->update(['phone'=>$phone]);
         if($modifyPhone){
             $user = DB::table('act_judger')->where('id',$id)->first();
-            DB::table('act_user')->where('pid',$user->id)->update(['account'=>$phone,'password'=> md5($phone)]);
+            DB::table('act_user')->where(['pid'=>$user->id,'type'=> $request->get('type')])->update(['account'=>$phone,'password'=> md5($phone)]);
             $data = [
                 'code'=> 200,
                 'msg'=>'修改成功',
