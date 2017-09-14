@@ -13,7 +13,10 @@ use PhpParser\Node\Scalar\DNumber;
 
 class PlotterController extends BaseController
 {
-	
+	public function phpinfo(){
+	    phpinfo();
+    }
+
 	//不包含验证码的注册(完成)
 	public function registerWithoutCode(Request $request)
     {

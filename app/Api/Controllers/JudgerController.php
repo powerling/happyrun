@@ -105,7 +105,6 @@ class JudgerController extends BaseController
             $info = DB::table('act_judger')->where('phone',$phone)->first();
             return response()->json([
                 'code'=> 200,
-                'result' => true,
                 'msg' => '修改成功！',
                 'data' => $info
             ]);

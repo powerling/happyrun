@@ -72,6 +72,7 @@ $api->version('v1', function ($api) {
         $api->post('user/saver/setPassword','SaveController@resetPassword');
 
 		$api->post('/user/verify','PlotterController@verify');
+		$api->get('/phpinfo','PlotterController@phpinfo');
 
 		
        /* $api->get('posts', 'PostController@index');
