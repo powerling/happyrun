@@ -19,14 +19,12 @@ class SaveController extends BaseController
             $info = DB::table('act_saver')->where('phone',$phone)->first();
             return response()->json([
                 'code'=> 200,
-                'result' => true,
                 'msg' => '修改成功！',
                 'data' => $info
             ]);
         }
         return response()->json([
             'code'=> 400,
-            'result' => false,
             'msg' => '操作失败！',
             'data' => null
         ]);
@@ -67,8 +65,8 @@ class SaveController extends BaseController
         if(count($select)>0){
             return response()->json([
                 'code'=> 400,
-                'result' => false,
-                'msg' =>  '该手机号已被使用！'
+                'msg' =>  '该手机号已被使用！',
+                'data' => null
             ]);
         }
         $modifyPhone = DB::table('act_saver')->where('id',$id)->update(['phone'=>$phone]);
@@ -77,7 +75,6 @@ class SaveController extends BaseController
             DB::table('act_user')->where('pid',$user->id)->update(['account'=>$phone,'password'=> md5($phone)]);
             $data = [
                 'code'=> 200,
-                'result'=>true,
                 'msg'=>'修改成功',
                 'data'=>DB::table('act_saver')->where('id',$id)->first()
             ];
@@ -85,7 +82,6 @@ class SaveController extends BaseController
         }else{
             $data = [
                 'code'=> 400,
-                'result'=>false,
                 'msg'=>'修改失败',
                 'data'=>null
             ];
@@ -105,17 +101,15 @@ class SaveController extends BaseController
 		if($modifyPassword){
 			$data = [
                 'code'=> 200,
-		      'result'=>true,
-		      'msg'=>'修改成功',
-		      //'data'=>
+                'msg'=>'修改成功',
+		        'data'=>null
 		   ];
 		   return response()->json($data);
 		}
 			$data = [
                 'code'=> 400,
-		      'result'=>false,
-		      'msg'=>'修改失败',
-		      //'data'=>
+		        'msg'=>'修改失败',
+		        'data'=> null
 		   ];
 		   return response()->json($data);
 

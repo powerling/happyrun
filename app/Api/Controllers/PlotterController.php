@@ -27,8 +27,8 @@ class PlotterController extends BaseController
         if(count($select)>0){
             return response()->json([
                 'code'=> 400,
-                'data' => false,
-                'msg' => '帐号已经存在!'
+                'msg' => '帐号已经存在!',
+                'data' => null
             ]);
         }
         DB::table('act_code')->insert(['phone'=>$phone,'code' => '0000']);
@@ -37,8 +37,8 @@ class PlotterController extends BaseController
         if($res){
 			return response()->json([
                 'code'=> 200,
-			    'data'=>true,
-                'msg' => '注册成功！'
+                'msg' => '注册成功！',
+                'data' => null
             ]);
 		}else{
 			DB::table('act_plotter')->where('id',$plotter['id'])->delete();
@@ -261,8 +261,8 @@ class PlotterController extends BaseController
         }else{
             return response()->json([
                 'code'=> 400,
-                'result' => false,
-                'msg' => '该帐号尚未注册！'
+                'msg' => '该帐号尚未注册！',
+                'data' => null
             ]);
         }
     }
@@ -275,14 +275,14 @@ class PlotterController extends BaseController
         $select = DB::table('act_code')->where(['phone'=>$phone,'code' =>$code])->get();
         $data = [
             'code'=> 400,
-            'result' => false,
-            'msg' => '验证码输入错误！'
+            'msg' => '验证码输入错误！',
+            'data' => null
         ];
         if(count($select)>0){
             $data = [
                 'code'=> 200,
-                'result' => true,
-                'msg' => '验证码输入正确！'
+                'msg' => '验证码输入正确！',
+                'data' => null
             ];
             return response()->json($data);
         }
@@ -295,15 +295,15 @@ class PlotterController extends BaseController
         $phone = $request->get('phone');
         $data = [
             'code'=> 400,
-            'result' => false,
-            'msg' => '操作错误！'
+            'msg' => '操作错误！',
+            'data' => null
         ];
         $result = DB::table('act_user')->where(['account' => $phone])->update(['password' => md5($newPassword)]);
         if($result){
             $data = [
                 'code'=> 200,
-                'result' => true,
-                'msg' => '密码重置成功!'
+                'msg' => '密码重置成功!',
+                'data' => null
             ];
             return  response()->json($data);
         }
@@ -321,14 +321,12 @@ class PlotterController extends BaseController
             $info = DB::table('act_plotter')->where('phone',$phone)->first();
             return response()->json([
                 'code'=> 200,
-                'result' => true,
                 'msg' => '修改成功！',
                 'data' => $info
             ]);
         }
         return response()->json([
             'code'=> 400,
-            'result' => false,
             'msg' => '操作失败！',
             'data' => null
         ]);
@@ -371,7 +369,6 @@ class PlotterController extends BaseController
                 $info = DB::table('act_plotter')->where('phone',$phone)->first();
                 $data = [
                     'code'=> 200,
-                    'result'=>true,
                     'msg'=>'修改成功',
                     'data'=> $info
                 ];
@@ -379,7 +376,6 @@ class PlotterController extends BaseController
             }else{
                 $data = [
                     'code'=> 400,
-                    'result'=>false,
                     'msg'=>'修改失败',
                     'data'=>null
                 ];
@@ -396,8 +392,8 @@ class PlotterController extends BaseController
 		if(count($modifyPhone)>0){
 		    return response()->json([
                 'code'=> 400,
-		        'result' => false,
-                'msg' =>  '该手机号已被使用！'
+                'msg' =>  '该手机号已被使用！',
+                'data' => null
             ]);
         }
         $select = DB::table('act_plotter')->where('id',$pid)->first();
@@ -409,7 +405,6 @@ class PlotterController extends BaseController
             DB::table('act_code')->insert(['phone'=>$phone,'code'=> '0000']);
             $data = [
                 'code'=> 200,
-                'result'=> true,
                 'msg'=>'修改成功',
                 'data'=>[
                     'id' => $user->id,
@@ -425,7 +420,6 @@ class PlotterController extends BaseController
 		}
         $data = [
             'code'=> 400,
-            'result'=>false,
             'msg'=>'修改失败',
             'data'=>null
         ];
@@ -443,15 +437,15 @@ class PlotterController extends BaseController
 		if($modifyPassword){
 			$data = [
                 'code'=> 200,
-		      'result'=>true,
-		      'msg'=>'修改成功',
+		        'msg'=>'修改成功',
+                'data' => null
 		   ];
 		   return response()->json($data);
 		}
         $data = [
             'code'=> 400,
-            'result'=>false,
             'msg'=>'修改失败',
+            'data' => null
         ];
         return response()->json($data);
 

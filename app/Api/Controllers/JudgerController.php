@@ -43,8 +43,8 @@ class JudgerController extends BaseController
         if(count($select)>0){
             return response()->json([
                 'code'=> 400,
-                'result' => false,
-                'msg' =>  '该手机号已被使用！'
+                'msg' =>  '该手机号已被使用！',
+                'data' => null
             ]);
         }
         $modifyPhone = DB::table('act_judger')->where('id',$id)->update(['phone'=>$phone]);
@@ -79,14 +79,14 @@ class JudgerController extends BaseController
 			$data = [
 		      'code'=>200,
 		      'msg'=>'修改成功',
-		      //'data'=>
+		      'data'=>null
 		   ];
 		   return response()->json($data);
 		}else{
 			$data = [
 		      'code'=>400,
 		      'msg'=>'该id不存在',
-		      //'data'=>
+		      'data'=>null
 		   ];
 		   return response()->json($data);
 		}

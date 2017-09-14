@@ -42,8 +42,8 @@ class ActorController extends BaseController
         if(count($select)>0){
             return response()->json([
                 'code'=> 400,
-                'result' => false,
-                'msg' =>  '该手机号已被使用！'
+                'msg' =>  '该手机号已被使用！',
+                'data' => null
             ]);
         }
 		$modifyPhone = DB::table('act_actor')->where('id',$id)->update(['phone'=>$phone]);
@@ -78,16 +78,16 @@ class ActorController extends BaseController
 		if($modifyPassword){
 			$data = [
                 'code'=> 200,
-		      'result'=>true,
-		      'msg'=>'修改成功',
+		        'msg'=>'修改成功',
+                'data' => null
 		      //'data'=>
 		   ];
 		   return response()->json($data);
 		}
 			$data = [
                 'code'=> 400,
-		      'result'=>false,
-		      'msg'=>'修改失败',
+		        'msg'=>'修改失败',
+                'data' => null
 		      //'data'=>
 		   ];
 		   return response()->json($data);
@@ -105,14 +105,12 @@ class ActorController extends BaseController
             $info = DB::table('act_actor')->where('phone',$phone)->first();
             return response()->json([
                 'code'=> 200,
-                'result' => true,
                 'msg' => '修改成功！',
                 'data' => $info
             ]);
         }
         return response()->json([
             'code'=> 400,
-            'result' => false,
             'msg' => '操作失败！',
             'data' => null
         ]);
@@ -126,13 +124,13 @@ class ActorController extends BaseController
 	        $data = DB::table('act_action')->where('id',$action_id)->first();
 	        return response()->json([
                 'code'=> 200,
-	            'result' => true,
+                'msg' => '活动进行中',
                 'data' => $data
             ]);
         }
         return response()->json([
             'code'=> 400,
-           'result' =>false,
+            'msg' => '活动开始失败',
             'data'=> null
         ]);
     }
@@ -149,13 +147,13 @@ class ActorController extends BaseController
             ])->delete();
             return response()->json([
                 'code'=> 200,
-                'result' => true,
+                'msg' => '活动完美结束',
                 'data' => $data
             ]);
         }
         return response()->json([
             'code'=> 400,
-            'result' =>false,
+            'msg' => '活动结束失败',
             'data'=> null
         ]);
     }
@@ -167,13 +165,13 @@ class ActorController extends BaseController
         if(count($group)>0){
             return response()->json([
                 'code'=> 200,
-                'result' => true,
+                'msg' => '成功获取组员信息',
                 'data' => $group
             ]);
         }
         return response()->json([
             'code'=> 400,
-            'result' => false,
+            'data' => '信息获取失败',
             'data' => null
         ]);
     }
