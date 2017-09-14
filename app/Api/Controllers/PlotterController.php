@@ -558,21 +558,24 @@ class PlotterController extends BaseController
         });
 
             $data = DB::table('act_action')->where('id',$action_id)->first();
-            return response()->json($data);
+            return response()->json([
+                'code' => 200,
+                'data' => $data
+            ]);
 	}
 
 
 	//获取活动的详细信息(完成)
     public function actionInformation(Request $request){
         $action_id = $request->get('id');
-        $action_info = DB::table('act_action')->where('id',$action_id)->get();
-        $action_actor = DB::table('act_actor')->where('aid',$action_id)->get();
-        $action_duty = DB::table('act_duty')->where('aid',$action_id)->get();
-        $action_group = DB::table('act_group')->where('aid',$action_id)->get();
-        $action_judger = DB::table('act_judger')->where('aid',$action_id)->get();
-        $action_place = DB::table('act_place')->where('aid',$action_id)->get();
-        $action_saver = DB::table('act_saver')->where('aid',$action_id)->get();
-        $action_way  = DB::table('act_way')->where('aid',$action_id)->get();
+        $action_info = DB::table('act_action')->where('id',$action_id)->first();
+        $action_actor = DB::table('act_actor')->where('aid',$action_id)->first();
+        $action_duty = DB::table('act_duty')->where('aid',$action_id)->first();
+        $action_group = DB::table('act_group')->where('aid',$action_id)->first();
+        $action_judger = DB::table('act_judger')->where('aid',$action_id)->first();
+        $action_place = DB::table('act_place')->where('aid',$action_id)->first();
+        $action_saver = DB::table('act_saver')->where('aid',$action_id)->first();
+        $action_way  = DB::table('act_way')->where('aid',$action_id)->first();
         return response()->json([
             'code'=> 200,
             'action_info' => $action_info,

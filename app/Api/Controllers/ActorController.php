@@ -20,7 +20,7 @@ class ActorController extends BaseController
 			$data = [
 		      'code'=>200,
 		      'msg'=>'修改成功',
-		      'data'=>DB::table('act_actor')->where('id',$id)->get()
+		      'data'=>DB::table('act_actor')->where('id',$id)->first()
 		   ];
 		   return response()->json($data);
 		}else{
@@ -53,7 +53,7 @@ class ActorController extends BaseController
 			$data = [
 		      'code'=>200,
 		      'msg'=>'修改成功',
-		      'data'=>DB::table('act_actor')->where('id',$id)->get()
+		      'data'=>DB::table('act_actor')->where('id',$id)->first()
 		   ];
 		   return response()->json($data);
 		}else{
@@ -163,7 +163,7 @@ class ActorController extends BaseController
     //组员信息
     public function group(Request $request){
         $group_id = $request->get('group_id');
-        $group = DB::table('act_actor')->where('gid',$group_id)->get();
+        $group = DB::table('act_actor')->where('gid',$group_id)->first();
         if(count($group)>0){
             return response()->json([
                 'code'=> 200,

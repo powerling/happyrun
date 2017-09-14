@@ -22,7 +22,7 @@ class JudgerController extends BaseController
 			$data = [
 		      'code'=>200,
 		      'msg'=>'修改成功',
-		      'data'=>DB::table('act_judger')->where('id',$id)->get()
+		      'data'=>DB::table('act_judger')->where('id',$id)->first()
 		   ];
 		   return response()->json($data);
 		}else{
@@ -53,15 +53,13 @@ class JudgerController extends BaseController
             DB::table('act_user')->where('pid',$user->id)->update(['account'=>$phone,'password'=> md5($phone)]);
             $data = [
                 'code'=> 200,
-                'result'=>true,
                 'msg'=>'修改成功',
-                'data'=>DB::table('act_judger')->where('id',$id)->get()
+                'data'=>DB::table('act_judger')->where('id',$id)->first()
             ];
             return response()->json($data);
         }else{
             $data = [
                 'code'=> 400,
-                'result'=>false,
                 'msg'=>'修改失败',
                 'data'=>null
             ];
@@ -111,7 +109,6 @@ class JudgerController extends BaseController
         }
         return response()->json([
             'code'=> 400,
-            'result' => false,
             'msg' => '操作失败！',
             'data' => null
         ]);

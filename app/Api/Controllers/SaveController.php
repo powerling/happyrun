@@ -45,7 +45,7 @@ class SaveController extends BaseController
 			$data = [
 		      'code'=>200,
 		      'msg'=>'修改成功',
-		      'data'=>DB::table('act_saver')->where('id',$id)->get()
+		      'data'=>DB::table('act_saver')->where('id',$id)->first()
 		   ];
 		   return response()->json($data);
 		}else{
@@ -79,7 +79,7 @@ class SaveController extends BaseController
                 'code'=> 200,
                 'result'=>true,
                 'msg'=>'修改成功',
-                'data'=>DB::table('act_saver')->where('id',$id)->get()
+                'data'=>DB::table('act_saver')->where('id',$id)->first()
             ];
             return response()->json($data);
         }else{
