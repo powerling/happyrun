@@ -60,8 +60,8 @@ class PlotterController extends BaseController
         if(count($select)>0){
             return response()->json([
                 'code'=> 400,
-                'data' => false,
-                'msg' => '帐号已经存在!'
+                'msg' => '帐号已经存在!',
+                'data' => null
             ]);
         }
         $result = DB::table('act_code')->where(['phone'=> $phone,'code' => $code])->get();
@@ -70,16 +70,16 @@ class PlotterController extends BaseController
             DB::table('act_user')->where('account',$phone)->update(['password'=>md5($pwd)]);
             return response()->json([
                 'code'=> 200,
-                'data'=>true,
-                'msg' => '注册成功！'
+                'msg' => '注册成功！',
+                'data'=> null
             ]);
         }else{
             DB::table('act_plotter')->where('phone',$phone)->delete();
             DB::table('act_user')->where('account',$phone)->delete();
             return response()->json([
                 'code'=> 400,
-                'data' => false,
-                'msg' => '注册失败！'
+                'msg' => '注册失败！',
+                'data' => null
             ]);
         }
     }
