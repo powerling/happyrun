@@ -572,14 +572,17 @@ class PlotterController extends BaseController
         $action_way  = DB::table('act_way')->where('aid',$action_id)->get();
         return response()->json([
             'code'=> 200,
-            'action_info' => $action_info,
-            'action_actor' => $action_actor,
-            'action_duty' => $action_duty,
-            'action_group' => $action_group,
-            'action_judger' => $action_judger,
-            'action_place' => $action_place,
-            'action_saver' => $action_saver,
-            'action_way' => $action_way
+            'msg' => '成功',
+            'data' => [
+                'action_info' => $action_info,
+                'action_actor' => $action_actor,
+                'action_duty' => $action_duty,
+                'action_group' => $action_group,
+                'action_judger' => $action_judger,
+                'action_place' => $action_place,
+                'action_saver' => $action_saver,
+                'action_way' => $action_way
+            ]
         ]);
     }
 

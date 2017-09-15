@@ -115,6 +115,7 @@ class JudgerController extends BaseController
         ]);
     }
 
+    //站点密钥（完成）
     public function placeCode(Request $request){
 	    $place_id = $request->get('place_id');
 	    $code = rand(1000,9999);
@@ -132,5 +133,33 @@ class JudgerController extends BaseController
             'data' => null
         ]);
     }
-	
+
+    //裁判提交完成队伍(完成)
+    public function groupFinish(Request $request){
+        $place_id = $request->get('place_id');
+        $group_id = $request->get('group_id');
+        $code = $request->get('code');
+        $select = DB::table('act_place')->where(['id'=>$place_id,'code'=> $code])->get();
+        if(count($select)>0){
+            $result = DB::table('act_work')->insert(['gid'=>$group_id,'pid'=>$place_id,'res'=>1]);
+            if($result){
+                return response()->json([
+                    'code' => 200,
+                    'msg' => '信息提交成功',
+                    'data' => null
+                ]);
+            }
+            return response()->json([
+                'code' => 400,
+                'msg' => '信息提交失败',
+                'data' => null
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'msg' => '信息提交失败',
+            'data' => null
+        ]);
+    }
+
 }

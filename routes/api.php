@@ -53,6 +53,7 @@ $api->version('v1', function ($api) {
 		$api->post('user/judger/modifyPassword','JudgerController@modifyPassword');//完成
 		$api->post('user/judger/modifyPic','JudgerController@modifyPic');//完成
 		$api->post('user/judger/placeCode','JudgerController@placeCode');//完成
+		$api->post('user/judger/groupFinish','JudgerController@groupFinish');//完成
 
 		
 		//组长
