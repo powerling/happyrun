@@ -162,7 +162,7 @@ class ActorController extends BaseController
     //组员信息
     public function group(Request $request){
         $group_id = $request->get('group_id');
-        $group = DB::table('act_actor')->where('gid',$group_id)->first();
+        $group = DB::table('act_actor')->where('gid',$group_id)->get();
         if(count($group)>0){
             return response()->json([
                 'code'=> 200,
@@ -176,6 +176,28 @@ class ActorController extends BaseController
             'data' => null
         ]);
     }
+
+    //修改活动名称(完成)
+    public function modifyActionName(Request $request){
+        $action_id = $request->get('action_id');
+        $action_name = $request->get('action_name');
+        $result = DB::table('act_action')->where(['id'=>$action_id])->update(['name'=>$action_name]);
+        if($result){
+            return response()->json([
+                'code' => 200,
+                'msg' => '活动名修改成功',
+                'data' => DB::table('act_action')->where(['id'=>$action_id])->first()
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'msg' => '活动名修改失败',
+            'data' => null
+        ]);
+    }
+
+    //
+
 
     //推送
     public function push(Request $request){
