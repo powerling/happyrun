@@ -562,7 +562,7 @@ class PlotterController extends BaseController
 	//获取活动的详细信息(完成)
     public function actionInformation(Request $request){
         $action_id = $request->get('id');
-        $action_info = DB::table('act_action')->where('id',$action_id)->get();
+        $action_info = DB::table('act_action')->where('id',$action_id)->first();
         $action_actor = DB::table('act_actor')->where('aid',$action_id)->get();
         $action_duty = DB::table('act_duty')->where('aid',$action_id)->get();
         $action_group = DB::table('act_group')->where('aid',$action_id)->get();
