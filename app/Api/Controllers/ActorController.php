@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use JPush\Client as JPush;
 
 class ActorController extends BaseController
 {
@@ -174,5 +175,18 @@ class ActorController extends BaseController
             'data' => '信息获取失败',
             'data' => null
         ]);
+    }
+
+    //推送
+    public function push(Request $request){
+        $app_key  = env('PUSH_APP_KEY',null);
+        $master_secret = env('PUSH_MASTER_SECRET',null);
+        $client = new JPush($app_key, $master_secret,null);
+//        $push = $client->push();
+        $client->push()
+            ->setPlatform('android')
+            ->addAllAudience()
+            ->setNotificationAlert('Hello, JPush')
+            ->send();
     }
 }

@@ -39,7 +39,7 @@ class JudgerController extends BaseController
 	public function modifyPhone(Request $request){
         $phone = $request->get('phone');
         $id = $request->get('id');
-        $tyep = $request->get('type');
+        $type = $request->get('type');
         $select = DB::table('act_judger')->where('phone',$phone)->first();
         if(count($select)>0){
             return response()->json([
@@ -111,6 +111,24 @@ class JudgerController extends BaseController
         return response()->json([
             'code'=> 400,
             'msg' => '操作失败！',
+            'data' => null
+        ]);
+    }
+
+    public function placeCode(Request $request){
+	    $place_id = $request->get('place_id');
+	    $code = rand(1000,9999);
+	    $select = DB::table('act_place')->where('id',$place_id)->update(['code' => $code]);
+	    if($select){
+	        return response()->json([
+	            'code' => 200,
+                'msg' => '获取成功',
+                'data' => DB::table('act_place')->where('id',$place_id)->first()
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'msg' => '获取失败',
             'data' => null
         ]);
     }

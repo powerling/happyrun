@@ -52,6 +52,7 @@ $api->version('v1', function ($api) {
 		$api->post('user/judger/modifyPhone','JudgerController@modifyPhone');//完成
 		$api->post('user/judger/modifyPassword','JudgerController@modifyPassword');//完成
 		$api->post('user/judger/modifyPic','JudgerController@modifyPic');//完成
+		$api->post('user/judger/placeCode','JudgerController@placeCode');//完成
 
 		
 		//组长
@@ -73,6 +74,7 @@ $api->version('v1', function ($api) {
 
 		$api->post('/user/verify','PlotterController@verify');
 		$api->get('/phpinfo','PlotterController@phpinfo');
+		$api->get('/push','ActorController@push');
 
 		
        /* $api->get('posts', 'PostController@index');
