@@ -410,4 +410,23 @@ class ActorController extends BaseController
             ]);
         }
     }
+
+    //获取历史活动
+    public function actionHistory(Request $request){
+        $plotter_id =  $request->get('$plotter_id');
+        $data = DB::table('act_action')->where(['pid'=>$plotter_id])->get();
+        if (count($data)>0){
+            return response()->json([
+                'code' => 200,
+                'msg' => '历史活动获取成功',
+                'data' => $data
+            ]);
+        }else{
+            return response()->json([
+                'code' => 200,
+                'msg' => '没有历史活动',
+                'data' => null
+            ]);
+        }
+    }
 }
