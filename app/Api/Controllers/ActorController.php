@@ -196,9 +196,6 @@ class ActorController extends BaseController
         ]);
     }
 
-    //
-
-
     //推送
     public function push(Request $request){
         $app_key  = env('PUSH_APP_KEY',null);
@@ -210,5 +207,207 @@ class ActorController extends BaseController
             ->addAllAudience()
             ->setNotificationAlert('Hello, JPush')
             ->send();
+    }
+
+    //上传路线信息
+    public function uploadWay(Request $request){
+        $action_info = $request->get('way_info');
+        $action =  json_decode($action_info);
+        $action_id = $action->action_id;
+        $way_name = $action->name;
+        $count = count($action->info);
+//        return $action->info[1]->place_id;
+//        return $action_id;
+//        return $way_name;
+//        return $count;
+        if($count > 0){
+            $way_id = DB::table('act_way')->insertGetId(['aid'=>$action_id,'name'=>$way_name,'places'=>$count,'startpid'=>$action->info[0]->place_id,'endedpid'=>$action->info[$count-1]->place_id]);
+            foreach ($action->info as $value){
+                DB::table('way_place_duty')->insert(['way_id'=>$way_id,'place_id'=>$value->place_id,'judger_id'=>$value->judger_id,'duty_id'=>$value->duty_id]);
+            }
+            $way_info = DB::table('act_way')->where('id',$way_id)->get();
+            return response()->json([
+                'code' => 200,
+                'msg' => '线路设置成功!',
+                'data' => $way_info
+            ]);
+        }else{
+            $way_id = DB::table('act_way')->insertGetId(['aid'=>$action_id,'name'=>$way_name]);
+            $way_info = DB::table('act_way')->where('id',$way_id)->get();
+            return response()->json([
+                'code' => 200,
+                'msg' => '线路设置成功!',
+                'data' => $way_info
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'msg' => '线路设置失败!',
+            'data' => null
+        ]);
+
+
+    }
+
+    //某一条线路信息获取
+    public function wayInformation(Request $request){
+        $way_id = $request->get('way_id');
+        $way_info =  DB::table('way_place_duty')->where('way_id',$way_id)->get();
+        if(count($way_info)<=0){
+            return response()->json([
+                'code' => 400,
+                'msg' => '该路线还未设置站点',
+                'data' => null
+            ]);
+        }else{
+            $data = array();
+            foreach ($way_info as $info){
+                $way = DB::table('act_way')->where('id',$info->way_id)->first();
+                $place = DB::table('act_place')->where('id',$info->place_id)->first();
+                $duty = DB::table('act_duty')->where('id',$info->duty_id)->first();
+                $judger = DB::table('act_judger')->where('id',$info->judger_id)->first();
+                $arr = array(
+                    'id' => $info->id,
+                    'way_id' => $info->way_id,
+                    'way_name' => $way->name,
+                    'place_id' => $info->place_id,
+                    'place_name' => $place->name,
+                    'duty_id' => $info->duty_id,
+                    'duty_name' => $duty->title,
+                    'judger_id' => $info->judger_id,
+                    'judger_name' => $judger->name
+                );
+                array_push($data,$arr);
+            }
+            return response()->json([
+                'code' =>200,
+                'msg' => '路线信息获取成功!',
+                'data' => $data
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'msg' => '路线信息获取失败!',
+            'data' => null
+        ]);
+    }
+
+    //修改某一路线某一站点信息
+    public function modifyPlaceInformation(Request $request){
+        $id = $request->get('id');
+        $place_id = $request->get('place_id');
+        $judger_id = $request->get('judger_id');
+        $duty_id = $request->get('duty_id');
+        $result = DB::table('way_place_duty')->where('id',$id)->update(['place_id'=>$place_id,'judger_id'=>$judger_id,'duty_id'=>$duty_id]);
+        if($result){
+            return response()->json([
+                'code' => 200,
+                'msg' => '信息修改成功',
+                'data' => DB::table('way_place_duty')->where('id',$id)->first()
+            ]);
+        }else{
+            return response()->json([
+                'code' => 400,
+                'msg' => '信息修改失败',
+                'data' => null
+
+            ]);
+        }
+    }
+
+    //修改队伍的组长
+    public function modifyGrouper(Request $request){
+        $group_info = $request->get('group');
+        $info = json_decode($group_info);
+        foreach ($info as $value){
+            $actor_id = $value->actor_id;
+            $group_id = $value->group_id;
+            $actor = DB::table('act_actor')->where(['id'=>$actor_id])->first();
+            DB::table('act_group')->where(['id'=>$group_id])->update(['lid'=>$actor_id,'name'=>$actor->name]);
+        }
+        return response()->json([
+            'code' => 200,
+            'msg' => '组长修改成功',
+            'data' => null
+        ]);
+    }
+
+    //修改参与者的分组
+    public function modifyGroup(Request $request){
+        $action_id = $request->get('action_id');
+        $group = $request->get('group_info');
+        $group_info = json_decode($group);
+        DB::table('act_actor')->where('aid',$action_id)->update(['gid'=>null]);
+        foreach ($group_info as $value){
+            foreach ($value->actor as $array){
+                DB::table('act_actor')->where(['id'=> $array])->update(['gid'=>$value->group_id]);
+            }
+        }
+        return response()->json([
+            'code' => 200,
+            'msg' => '分组修改成功',
+            'data' => null
+        ]);
+    }
+
+    //分配路线
+    public function matchWay(Request $request){
+        $way = $request->get('group_way');
+        $group_way = json_decode($way);
+        foreach ($group_way as $value){
+            DB::table('act_group')->where(['id'=>$value->group_id])->update(['wid'=>$value->way_id]);
+        }
+        return response()->json([
+            'code'=>200,
+            'msg'=> '路线匹配成功',
+            'data' => null
+        ]);
+    }
+
+    //活动信息修改(暂缓)
+    public function modifyActionInformation(Request $request){
+        $action_id = $request->get('action_id');
+        $action_name = $request->get('action_name');
+        $action_count = $request->get('action_count');
+    }
+
+    //删除路线
+    public function deleteWay(Request $request){
+        $way_id = $request->get('way_id');
+        $result = DB::table('act_way')->where('id',$way_id)->delete();
+        $result2 = DB::table('way_place_duty')->where('way_id',$way_id)->delete();
+        if($result&&$result2){
+            return response()->json([
+                'code' => 200,
+                'msg' => '该路线已被删除!',
+                'data' => null
+            ]);
+        }else{
+            return response()->json([
+                'code' => 400,
+                'msg' => '该路线删除失败!',
+                'data' => null
+            ]);
+        }
+    }
+
+    //预约活动开始时间
+    public function appointAction(Request $request){
+        $action_id = $request->get('action_id');
+        $startTime = $request->get('startTime');
+        $result = DB::table('act_action')->where('id',$action_id)->update(['starttime'=>$startTime]);
+        if ($result){
+            return response()->json([
+                'code' => 200,
+                'msg' => '活动预约成功',
+                'data' => DB::table('act_action')->where('id',$action_id)->first()
+            ]);
+        }else{
+            return response()->json([
+                'code' => 400,
+                'msg' => '活动预约失败',
+                'data' => null
+            ]);
+        }
     }
 }

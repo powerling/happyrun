@@ -46,6 +46,7 @@ $api->version('v1', function ($api) {
 
 
 
+
 		
 		//裁判
 		$api->post('user/judger/modifyName','JudgerController@modifyName');//完成
@@ -64,6 +65,14 @@ $api->version('v1', function ($api) {
 		$api->post('user/startAction','ActorController@startAction');//完成
 		$api->post('user/endAction','ActorController@endAction');//完成
 		$api->post('user/actor/group','ActorController@group');//完成
+		$api->post('user/uploadWay','ActorController@uploadWay');
+        $api->post('user/wayInformation','ActorController@wayInformation');
+        $api->post('user/modifyPlaceInformation','ActorController@modifyPlaceInformation');
+        $api->post('user/modifyGrouper','ActorController@modifyGrouper');
+        $api->post('user/modifyGroup','ActorController@modifyGroup');
+        $api->post('user/matchWay','ActorController@matchWay');
+        $api->post('user/deleteWay','ActorController@deleteWay');
+        $api->post('user/appointAction','ActorController@appointAction');
 
 
 		//救援
