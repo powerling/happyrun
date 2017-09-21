@@ -28,7 +28,14 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
         $schedule->call(function(){
-            DB::table('act_action')->where(['status'=>1])->whereNotNull('starttime')->update(['status'=>2]);
+            $result = DB::table('act_action')->where(['status'=>1])->whereNotNull('starttime')->get();
+            if (count($result)>0){
+                foreach ($result as $value){
+                    if(strtotime($value->starttime)<strtotime('now')){
+                        DB::table('act_action')->where('id',$value->id)->update(['status'=>2]);
+                    }
+                }
+            }
         })->everyMinute();
     }
 
