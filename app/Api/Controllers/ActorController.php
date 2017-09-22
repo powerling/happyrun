@@ -237,7 +237,7 @@ class ActorController extends BaseController
             return response()->json([
                 'code' => 200,
                 'msg' => '线路设置成功!',
-                'data' => $way_info
+                'data' => null
             ]);
         }
         return response()->json([
@@ -413,7 +413,7 @@ class ActorController extends BaseController
 
     //获取历史活动
     public function actionHistory(Request $request){
-        $plotter_id =  $request->get('$plotter_id');
+        $plotter_id =  $request->get('plotter_id');
         $data = DB::table('act_action')->where(['pid'=>$plotter_id])->get();
         if (count($data)>0){
             return response()->json([
@@ -429,4 +429,5 @@ class ActorController extends BaseController
             ]);
         }
     }
+
 }

@@ -73,6 +73,7 @@ $api->version('v1', function ($api) {
         $api->post('user/matchWay','ActorController@matchWay');
         $api->post('user/deleteWay','ActorController@deleteWay');
         $api->post('user/appointAction','ActorController@appointAction');
+        $api->post('user/actionHistory','ActorController@actionHistory');
 
 
 		//救援
