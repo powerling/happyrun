@@ -225,19 +225,19 @@ class ActorController extends BaseController
             foreach ($action->info as $value){
                 DB::table('way_place_duty')->insert(['way_id'=>$way_id,'place_id'=>$value->place_id,'judger_id'=>$value->judger_id,'duty_id'=>$value->duty_id]);
             }
-            $way_info = DB::table('act_way')->where('id',$way_id)->get();
+            $way_info = DB::table('act_way')->where('id',$way_id)->first();
             return response()->json([
                 'code' => 200,
                 'msg' => '线路设置成功!',
-                'data' => null
+                'data' => $way_info
             ]);
         }else{
             $way_id = DB::table('act_way')->insertGetId(['aid'=>$action_id,'name'=>$way_name]);
-            $way_info = DB::table('act_way')->where('id',$way_id)->get();
+            $way_info = DB::table('act_way')->where('id',$way_id)->first();
             return response()->json([
                 'code' => 200,
                 'msg' => '线路设置成功!',
-                'data' => null
+                'data' => $way_info
             ]);
         }
         return response()->json([
