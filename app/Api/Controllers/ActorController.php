@@ -229,7 +229,7 @@ class ActorController extends BaseController
             return response()->json([
                 'code' => 200,
                 'msg' => '线路设置成功!',
-                'data' => $way_info
+                'data' => null
             ]);
         }else{
             $way_id = DB::table('act_way')->insertGetId(['aid'=>$action_id,'name'=>$way_name]);
