@@ -245,8 +245,6 @@ class ActorController extends BaseController
             'msg' => '线路设置失败!',
             'data' => null
         ]);
-
-
     }
 
     //某一条线路信息获取
@@ -430,4 +428,75 @@ class ActorController extends BaseController
         }
     }
 
+    //查看任务
+    public function checkDuty(Request $request){
+        $way_id = $request->get('way_id');
+        $code = $request->get('code');
+        $place_id = $request->get('place_id');
+        $result = DB::table('act_place')->where(['id'=>$place_id,'code'=>$code])->get();
+        if(count($result)>0){
+            $info = DB::table('way_place_duty')->where(['way_id'=>$way_id,'place_id'=>$place_id])->first();
+            $data = DB::table('act_duty')->where(['id'=>$info->duty_id])->first();
+            return response()->json([
+                'code' => 200,
+                'msg' => '任务信息获取成功！',
+                'data' => $data
+            ]);
+        }else{
+            return response()->json([
+                'code' => 400,
+                'msg' => '任务信息获取失败',
+                'data' => null
+            ]);
+        }
+    }
+
+    //按照分组获取所有参与者信息和组长ID
+    public function groupActor(Request $request){
+        $action_id = $request->get('action_id');
+        $data = DB::table('act_actor')->where('aid',$action_id)->get();
+        $group = DB::table('act_group')->where('aid',$action_id)->get();
+        $results = array();
+        $group_id = 0;
+        $grouper_id = 0;
+        foreach ($group as $value){
+                $group_infos = array();
+                foreach ($data as $list){
+                    if($value->lid == $list->id){
+                        $grouper_id = $list->id;
+                    }
+                    if($value->id == $list->gid){
+                        $group_id = $list->gid;
+                        $group_info =  $list;
+                        array_push($group_infos,$group_info);
+                    }
+                }
+                $result = array(
+                    'group_id' => $group_id,
+                    'grouper_id' => $grouper_id,
+                    'group_info' => $group_infos
+                );
+            array_push($results,$result);
+        }
+        return response()->json([
+            'code' => 200,
+            'msg' => '信息获取成功',
+            'data' => $results
+        ]);
+    }
+
+    //修改路线信息
+    public function modifyWay(Request $request){
+        $way_info = $request->get('way_info');
+        $way_info = json_decode($way_info);
+        DB::table('way_place_duty')->where('way_id',$way_info->way_id)->delete();
+        foreach ($way_info->way_info as $value){
+            DB::table('way_place_duty')->insert(['way_id'=>$way_info->way_id,'place_id'=>$value->place_id,'judger_id'=>$value->judger_id,'duty_id'=>$value->duty_id]);
+        }
+        return response()->json([
+            'code' => 200,
+            'msg' => '路线信息修改成功!',
+            'data' => DB::table('way_place_duty')->where('way_id',$way_info->way_id)->get()
+        ]);
+    }
 }
