@@ -421,7 +421,7 @@ class ActorController extends BaseController
             ]);
         }else{
             return response()->json([
-                'code' => 200,
+                'code' => 400,
                 'msg' => '没有历史活动',
                 'data' => null
             ]);
@@ -498,5 +498,19 @@ class ActorController extends BaseController
             'msg' => '路线信息修改成功!',
             'data' => DB::table('way_place_duty')->where('way_id',$way_info->way_id)->get()
         ]);
+    }
+
+    //修改暂存活动
+    public function modifyAction(Request $request){
+        $action_id = $request->get('action_id');
+        $action_name = $request->get('action_name');
+        $action_excel = $request->file('excel');
+        if(isset($action_name)){
+            DB::table('act_action')->where('id',$action_id)->update(['name' => $action_name]);
+        }
+        if(isset($action_excel)){
+
+        }
+
     }
 }

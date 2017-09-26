@@ -77,6 +77,8 @@ $api->version('v1', function ($api) {
         $api->post('user/actor/checkDuty','ActorController@checkDuty');
         $api->post('user/actor/groupActor','ActorController@groupActor');
         $api->post('user/modifyWay','ActorController@modifyWay');
+        $api->post('user/modifyAction','ActorController@modifyAction');
+        $api->post('user/checkDuty','ActorController@checkDuty');
 
 
 		//救援
