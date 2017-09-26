@@ -62,6 +62,7 @@ $api->version('v1', function ($api) {
 		$api->post('user/actor/modifyPhone','ActorController@modifyPhone');//完成
 		$api->post('user/actor/modifyPassword','ActorController@modifyPassword');//完成
 		$api->post('user/actor/modifyPic','ActorController@modifyPic');//完成
+		$api->post('user/actor/groupActor','ActorController@groupActor');//完成
 		$api->post('user/startAction','ActorController@startAction');//完成
 		$api->post('user/endAction','ActorController@endAction');//完成
 		$api->post('user/actor/group','ActorController@group');//完成
@@ -79,6 +80,7 @@ $api->version('v1', function ($api) {
         $api->post('user/modifyWay','ActorController@modifyWay');
         $api->post('user/modifyAction','ActorController@modifyAction');
         $api->post('user/checkDuty','ActorController@checkDuty');
+        $api->post('user/applySave','ActorController@applySave');
 
 
 		//救援

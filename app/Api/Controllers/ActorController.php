@@ -1,6 +1,7 @@
 <?php
 namespace App\Api\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -196,19 +197,6 @@ class ActorController extends BaseController
         ]);
     }
 
-    //推送
-    public function push(Request $request){
-        $app_key  = env('PUSH_APP_KEY',null);
-        $master_secret = env('PUSH_MASTER_SECRET',null);
-        $client = new JPush($app_key, $master_secret,null);
-//        $push = $client->push();
-        $client->push()
-            ->setPlatform('android')
-            ->addAllAudience()
-            ->setNotificationAlert('Hello, JPush')
-            ->send();
-    }
-
     //上传路线信息
     public function uploadWay(Request $request){
         $action_info = $request->get('way_info');
@@ -362,13 +350,6 @@ class ActorController extends BaseController
         ]);
     }
 
-    //活动信息修改(暂缓)
-    public function modifyActionInformation(Request $request){
-        $action_id = $request->get('action_id');
-        $action_name = $request->get('action_name');
-        $action_count = $request->get('action_count');
-    }
-
     //删除路线
     public function deleteWay(Request $request){
         $way_id = $request->get('way_id');
@@ -500,6 +481,33 @@ class ActorController extends BaseController
         ]);
     }
 
+    //申请救援
+    public function applySave(Request $request){
+        $save_info = $request->get('save_info');
+        $save_info = json_decode($save_info);
+        $result_id = DB::table('act_save')->insertGetId([
+            'starttime' => Carbon::now(),
+            'gid'=>$save_info->group_id,
+            'targetx'=>$save_info->save_x,
+            'targety'=>$save_info->save_y,
+            'targetloc'=>$save_info->save_place,
+            'remark'=>$save_info->save_intro,
+            'status'=>1
+        ]);
+        if($result_id){
+            return response()->json([
+                'code' => 200,
+                'msg' => '救援申请成功',
+                'data' => DB::table('act_save')->where(['id'=>$result_id])->first()
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'msg' => '救援申请失败',
+            'data' => null
+        ]);
+    }
+
     //修改暂存活动
     public function modifyAction(Request $request){
         $action_id = $request->get('action_id');
@@ -512,5 +520,18 @@ class ActorController extends BaseController
 
         }
 
+    }
+
+    //推送
+    public function push(Request $request){
+        $app_key  = env('PUSH_APP_KEY',null);
+        $master_secret = env('PUSH_MASTER_SECRET',null);
+        $client = new JPush($app_key, $master_secret,null);
+//        $push = $client->push();
+        $client->push()
+            ->setPlatform('android')
+            ->addAllAudience()
+            ->setNotificationAlert('Hello, JPush')
+            ->send();
     }
 }
