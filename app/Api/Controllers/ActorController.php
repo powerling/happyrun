@@ -2,9 +2,8 @@
 namespace App\Api\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use JPush\Client as JPush;
 
